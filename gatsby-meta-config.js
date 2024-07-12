@@ -18,14 +18,14 @@
 /** @type {MetaConfig} */
 const metaConfig = {
   //TODO: Change the values below according to your project
-  title: "",
-  description: "",
-  author: "",
-  siteUrl: "",
-  lang: "",
-  utterances: "",
-  links: {},
-  favicon: "",
+  title: "tmp-title",
+  description: "tmp-description",
+  author: "tmp-author",
+  siteUrl: "https://tmp-siteUrl.netlify.app",
+  lang: "ko-KR",
+  utterances: "tmp-utterances",
+  links: { github: "https://github.com/mingi3314/blog-stream" },
+  favicon: "src/images/icon.png",
 }
 
 // eslint-disable-next-line no-undef

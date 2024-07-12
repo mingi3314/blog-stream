@@ -227,6 +227,6 @@ module.exports = {
     ...markdownPlugins,
     ...searchPlugins,
     ...pwaPlugins,
-    ...gtagPlugins,
+    // ...gtagPlugins, // Uncomment this line if you want to use Google Analytics
   ],
 }
