@@ -19,10 +19,13 @@
     "semantic-release": "semantic-release",
     "lint-staged": "lint-staged",
     "pre-commit": "yarn lint-staged",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "generate-content": "ts-node scripts/generate-content.ts"
   },
   "dependencies": {
+    "@langchain/mistralai": "^0.0.25",
     "dark-github-theme": "https://github.com/remorses/dark-github-theme.git#commit=3dde125a391f5557fcc42e0d95899750df4370bf",
+    "dotenv": "^16.4.5",
     "gatsby": "^5.12.12",
     "gatsby-plugin-feed": "^5.12.3",
     "gatsby-plugin-fusejs": "^2.0.2",
@@ -41,6 +44,7 @@
     "gatsby-source-filesystem": "^5.12.1",
     "gatsby-transformer-remark": "^6.12.3",
     "gatsby-transformer-sharp": "^5.12.3",
+    "langchain": "^0.2.9",
     "react-helmet": "^6.1.0",
     "react-typography": "^0.16.23",
     "react-use-fusejs": "^2.0.2",
@@ -48,6 +52,9 @@
     "styled-reset": "^4.5.1",
     "typography": "^0.16.24",
     "vscode-theme-github-light": "https://github.com/yunlingz/vscode-theme-github-light.git#commit=38174065a9e6c8d93a20fab5fe7c7641c07aeca7"
+  },
+  "resolutions": {
+    "@langchain/core": "0.2.15"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
@@ -86,6 +93,7 @@
     "react-dom": "^18.2.0",
     "schema-dts": "^1.1.2",
     "semantic-release": "^22.0.10",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "repository": {
