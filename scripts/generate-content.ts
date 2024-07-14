@@ -1,84 +1,167 @@
 /* eslint-disable unicorn/prefer-top-level-await */
-// import { JsonOutputParser } from "@langchain/core/output_parsers"
-import { StringOutputParser } from "@langchain/core/output_parsers"
+import fs from "node:fs"
+import path from "node:path"
+
+import type { BaseChatModel } from "@langchain/core/language_models/chat_models"
+import {
+  JsonOutputParser,
+  StringOutputParser,
+} from "@langchain/core/output_parsers"
 import { PromptTemplate } from "@langchain/core/prompts"
 import { RunnableSequence } from "@langchain/core/runnables"
 import { ChatMistralAI } from "@langchain/mistralai"
+import axios from "axios"
 import dotenv from "dotenv"
+
+import { prompt as contentCreatorPrompt } from "./prompts/content-creator"
+import { prompt as metaGeneratorPrompt } from "./prompts/meta-generator"
+import { prompt as outlineBuilderPrompt } from "./prompts/outline-builder"
 
 dotenv.config()
 
-const prompt = `### Instruction ###
-
-1. **Topic Selection**
-   - Identify a specific topic within the given {Topic} (e.g., health, travel, IT) that is both interesting and likely to attract a high volume of searches.
-   - Ensure the topic is relevant and can provide valuable information or insights to the readers.
-
-2. **Audience Integration**
-   - Consider the target audience of the blog. Determine what they find engaging or useful within the {Topic}.
-
-3. **SEO Optimization**
-   - Focus on a topic that has good potential for SEO. Use tools like Google Trends or keyword research tools to find high-volume, low-competition keywords related to the {Topic}.
-
-4. **Outline Development**
-   - Create a detailed, on-page SEO-optimized outline for the blog post.
-   - Include relevant headers and subheaders (H1, H2, H3) to structure the content effectively.
-   - Ensure the outline covers all necessary sections to provide comprehensive coverage of the topic.
-
-5. **Content Creation**
-   - Write a blog post based on the outline.
-   - The post should be informative, engaging, and between 1000 to 1800 words.
-   - Maintain a natural and conversational tone.
-   - Ensure the content is well-researched, accurate, and free of bias.
-
-### Step-by-Step Guide ###
-
-1. **Topic Selection:**
-   - Identify a trending or frequently searched topic within the given {Topic}.
-
-2. **Outline Development:**
-   - Introduction
-     - Briefly introduce the topic and its relevance.
-   - Main Sections (3-5 sections based on the topic)
-     - Break down the main points or aspects of the topic.
-     - Each section should cover a specific subtopic or angle.
-   - Additional Information
-     - Include any extra information that adds value, such as tips, case studies, or expert opinions.
-   - Conclusion
-     - Summarize the key points and provide a closing thought.
-
-3. **Content Creation:**
-   - Write each section in detail, ensuring clarity and coherence.
-   - Use SEO best practices, such as incorporating keywords naturally and using internal and external links.
-   - Keep the content within the 1000 to 1800-word range.
-   - Construct the content as a markdown format with appropriate headers(#) and subheaders(## or ###).
-
-### Output Instruction ###
-You must answer only the created content from the third step of the guide, "Content Creation" step.
-
-### Reward ###
-A $200 tip will be awarded for writing a high-quality, engaging, and SEO-optimized blog post that meets the outlined criteria and attracts significant reader interest.`
+const backgroundColors = [
+  "3498db", // 밝은 파랑
+  "2ecc71", // 에메랄드 녹색
+  "e74c3c", // 밝은 빨강
+  "f39c12", // 주황
+  "9b59b6", // 보라
+  "1abc9c", // 청록색
+  "d35400", // 진한 주황
+  "c0392b", // 어두운 빨강
+  "16a085", // 진한 청록색
+  "2980b9", // 진한 파랑
+  "8e44ad", // 진한 보라
+  "2c3e50", // 짙은 남색
+]
 
 async function main() {
-  const blogPostPrompt = PromptTemplate.fromTemplate(prompt)
+  const topic = "stock trading"
 
   const model = new ChatMistralAI({
     model: "open-mixtral-8x7b",
     temperature: 0.8,
   })
 
-  const chain = RunnableSequence.from([
-    blogPostPrompt,
+  const outline = await generateOutline(model, topic)
+  const content = await generateContent(model, outline)
+  const meta = await generateMeta(model, outline)
+
+  await createMarkdownFile(content, meta)
+}
+
+async function generateOutline(model: BaseChatModel, topic: string) {
+  console.log("Generating outline...")
+  const outlineBuildChain = RunnableSequence.from([
+    PromptTemplate.fromTemplate(outlineBuilderPrompt),
     model,
     new StringOutputParser(),
   ])
+  const outline = await outlineBuildChain.invoke({ Topic: topic })
+  console.log("Outline generated.")
+  return outline
+}
 
-  const topic = "stock trading"
-  const response = await chain.invoke({
-    Topic: topic,
+async function generateContent(model: BaseChatModel, outline: string) {
+  console.log("Generating content based on the outline...")
+  const contentCreateChain = RunnableSequence.from([
+    PromptTemplate.fromTemplate(contentCreatorPrompt),
+    model,
+    new StringOutputParser(),
+  ])
+  const content = await contentCreateChain.invoke({ Outline: outline })
+  console.log("Content generated.")
+  return content
+}
+
+async function generateMeta(model: BaseChatModel, outline: string) {
+  console.log("Generating meta data based on the outline...")
+  const metaGenerateChain = RunnableSequence.from([
+    PromptTemplate.fromTemplate(metaGeneratorPrompt),
+    model,
+    new JsonOutputParser(),
+  ])
+
+  const meta = await metaGenerateChain.invoke({ Outline: outline })
+  console.log("Meta data generated.")
+  return meta as { meta: { title: string; description: string } }
+}
+
+async function generatePlaceholderThumbnail(fileName: string): Promise<string> {
+  const width = 1200
+  const height = 630
+  const text = fileName.replaceAll("-", " ")
+  const backgroundColor =
+    backgroundColors[Math.floor(Math.random() * backgroundColors.length)]
+  const textColor = "ffffff"
+
+  const url = `https://dummyimage.com/${width}x${height}/${backgroundColor}/${textColor}.png&text=${encodeURIComponent(text)}`
+
+  const response = await axios({
+    url,
+    method: "GET",
+    responseType: "stream",
   })
 
-  console.log(response)
+  const thumbnailPath = path.join(
+    "src",
+    "posts",
+    "blog",
+    "images",
+    `${fileName}.png`,
+  )
+  const writer = fs.createWriteStream(thumbnailPath)
+
+  response.data.pipe(writer)
+
+  return new Promise((resolve, reject) => {
+    writer.on("finish", () => resolve(thumbnailPath))
+    writer.on("error", reject)
+  })
+}
+
+async function createMarkdownFile(
+  content: string,
+  meta: { meta: { title: string; description: string } },
+) {
+  const currentDate = new Date()
+    .toLocaleString("en-US", {
+      timeZone: "Asia/Seoul",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+    .replace(/(\d+)\/(\d+)\/(\d+),/, "$3-$1-$2")
+
+  const fileName = meta.meta.title
+    .replaceAll(/\s+/g, "-")
+    .replaceAll(":", "-")
+    .toLowerCase()
+
+  const thumbnailPath = await generatePlaceholderThumbnail(fileName)
+  const relativeThumbnailPath = path
+    .relative(path.join("src", "posts", "blog"), thumbnailPath)
+    .replaceAll("\\", "/")
+
+  const filePath = path.join("src", "posts", "blog", `${fileName}.md`)
+
+  const markdownContent = `---
+title: ${meta.meta.title.replaceAll(":", "-")}
+category: "constant"
+date: ${currentDate} +09:00
+desc: ${meta.meta.description.replaceAll(":", "-")}
+thumbnail: "./${relativeThumbnailPath}"
+alt: "Thumbnail for ${meta.meta.title}"
+---
+
+${content}`
+
+  fs.mkdirSync(path.dirname(filePath), { recursive: true })
+  fs.writeFileSync(filePath, markdownContent)
+
+  console.log(`Markdown file created: ${filePath}`)
 }
 
 main()
