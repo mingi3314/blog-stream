@@ -51,7 +51,8 @@
     "styled-components": "^6.1.1",
     "styled-reset": "^4.5.1",
     "typography": "^0.16.24",
-    "vscode-theme-github-light": "https://github.com/yunlingz/vscode-theme-github-light.git#commit=38174065a9e6c8d93a20fab5fe7c7641c07aeca7"
+    "vscode-theme-github-light": "https://github.com/yunlingz/vscode-theme-github-light.git#commit=38174065a9e6c8d93a20fab5fe7c7641c07aeca7",
+    "yargs": "^17.7.2"
   },
   "resolutions": {
     "@langchain/core": "0.2.15"
@@ -68,6 +69,7 @@
     "@types/react-helmet": "^6.1.11",
     "@types/styled-components": "^5.1.34",
     "@types/typography": "^0.16.7",
+    "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "babel-plugin-styled-components": "^2.1.4",

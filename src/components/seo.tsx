@@ -12,7 +12,7 @@ import useSiteMetadata from "~/src/hooks/useSiteMetadata"
 
 import defaultOpenGraphImage from "../images/og-thumbnail.png"
 
-const DEFAULT_LANG = "en"
+const DEFAULT_LANG = "en-US"
 
 type Meta = React.DetailedHTMLProps<
   React.MetaHTMLAttributes<HTMLMetaElement>,
@@ -34,7 +34,7 @@ const SEO: React.FC<SEOProperties> = ({
   jsonLds = [],
 }) => {
   const site = useSiteMetadata()
-  const description = desc || site.description
+  const description = (desc || site.description || "").slice(0, 160)
   const ogImageUrl = image || (defaultOpenGraphImage as string)
   const jsonLd = {
     "@context": "https://schema.org",
@@ -67,7 +67,7 @@ const SEO: React.FC<SEOProperties> = ({
     <Helmet
       htmlAttributes={{ lang: site.lang ?? DEFAULT_LANG }}
       title={title || site.title!}
-      titleTemplate={title || site.title!.replace(" 🍎", "")}
+      titleTemplate={title || site.title!}
       meta={
         [
           {
