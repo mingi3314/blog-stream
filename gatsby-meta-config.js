@@ -26,6 +26,7 @@ const metaConfig = {
   utterances: "mingi3314/blog-stream",
   links: { github: "https://github.com/mingi3314/blog-stream" },
   favicon: "src/images/icon.png",
+  gtagTrackingId: "GTM-MXQPDBV3",
 }
 
 // eslint-disable-next-line no-undef
