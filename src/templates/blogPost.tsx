@@ -89,8 +89,7 @@ const BlogPost: React.FC<PageProps<DataProps>> = ({ data }) => {
     author: {
       "@type": "Person",
       "@id": `${site.siteUrl}/#person`,
-      name: "", // TODO: add your name
-      url: "", // TODO: add your website
+      name: site.author, // TODO: add your name
     },
     description,
     url: `${site.siteUrl}${slug}`,
@@ -114,7 +113,7 @@ const BlogPost: React.FC<PageProps<DataProps>> = ({ data }) => {
         position: 1,
         item: {
           "@id": site.siteUrl,
-          name: "영어 표현",
+          name: site.title,
         },
       },
       {
@@ -134,6 +133,7 @@ const BlogPost: React.FC<PageProps<DataProps>> = ({ data }) => {
       <SEO
         title={title}
         desc={description}
+        slug={slug}
         image={ogImagePath}
         jsonLds={jsonLds}
       />

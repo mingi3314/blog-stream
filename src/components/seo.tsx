@@ -3,8 +3,10 @@ import React from "react"
 import { Helmet } from "react-helmet"
 import {
   type Graph,
+  type ImageObject,
   type Organization,
   type Thing,
+  type WebPage,
   type WebSite,
 } from "schema-dts"
 
@@ -22,7 +24,9 @@ type Meta = React.DetailedHTMLProps<
 interface SEOProperties {
   title?: Queries.Maybe<string>
   desc?: Queries.Maybe<string>
+  slug?: Queries.Maybe<string>
   image?: Queries.Maybe<string>
+  dateModified?: Queries.Maybe<string>
   meta?: Meta
   jsonLds?: Thing[]
 }
@@ -30,10 +34,12 @@ interface SEOProperties {
 const SEO: React.FC<SEOProperties> = ({
   title = "",
   desc = "",
+  slug = "",
   image,
   jsonLds = [],
 }) => {
   const site = useSiteMetadata()
+  const pageTitle = title || site.title!
   const description = (desc || site.description || "").slice(0, 160)
   const ogImageUrl = image || (defaultOpenGraphImage as string)
   const jsonLd = {
@@ -43,31 +49,60 @@ const SEO: React.FC<SEOProperties> = ({
       {
         "@type": "Organization",
         "@id": `${site.siteUrl}/#organization`,
-        name: "", // TODO: add your name
+        name: site.title,
         url: site.siteUrl,
         logo: {
           "@type": "ImageObject",
+          "@id": `${site.siteUrl}/#/schema/logo/image/`,
           url: `${site.siteUrl}${defaultOpenGraphImage}`,
+          contentUrl: `${site.siteUrl}${defaultOpenGraphImage}`,
+          caption: `${site.title} logo`,
+        },
+        image: {
+          "@id": `${site.siteUrl}/#/schema/logo/image/`,
         },
         sameAs: [],
       } as Organization,
       {
         "@type": "WebSite",
         "@id": `${site.siteUrl}/#website`,
-        name: "", // TODO: add your name
-        alternateName: "", // TODO: add your name
+        name: site.title,
+        alternateName: site.title,
         url: site.siteUrl,
         description: site.description,
-        inLanguage: ["ko", "en"],
+        publisher: { "@id": `${site.siteUrl}/#organization` },
+        inLanguage: site.lang ?? DEFAULT_LANG,
       } as WebSite,
+      {
+        "@type": "WebPage",
+        "@id": `${site.siteUrl}${slug}`,
+        url: `${site.siteUrl}${slug}`,
+        name: pageTitle,
+        isPartOf: { "@id": `${site.siteUrl}/#website` },
+        primaryImageOfPage: { "@id": `${site.siteUrl}${slug}#primaryImage` },
+        image: { "@id": `${site.siteUrl}${slug}#primaryImage` },
+        thumbnailUrl: ogImageUrl,
+        description: description,
+        inLanguage: site.lang ?? DEFAULT_LANG,
+        potentialAction: {
+          "@type": "ReadAction",
+          target: [`${site.siteUrl}${slug}`],
+        },
+      } as WebPage,
+      {
+        "@type": "ImageObject",
+        "@id": `${site.siteUrl}${slug}#primaryImage`,
+        url: ogImageUrl,
+        contentUrl: ogImageUrl,
+      } as ImageObject,
     ],
   } as Graph
 
   return (
     <Helmet
       htmlAttributes={{ lang: site.lang ?? DEFAULT_LANG }}
-      title={title || site.title!}
-      titleTemplate={title || site.title!}
+      title={pageTitle}
+      titleTemplate={pageTitle}
       meta={
         [
           {
