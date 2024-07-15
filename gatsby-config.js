@@ -9,7 +9,7 @@ const siteMetadata = {
   utterances: {
     repo: meta.utterances,
   },
-  postTitle: "전체",
+  postTitle: "All",
   menuLinks: [
     {
       link: "/",

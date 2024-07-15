@@ -12,6 +12,7 @@ import { RunnableSequence } from "@langchain/core/runnables"
 import { ChatMistralAI } from "@langchain/mistralai"
 import axios from "axios"
 import dotenv from "dotenv"
+import yargs from "yargs"
 
 import { prompt as contentCreatorPrompt } from "./prompts/content-creator"
 import { prompt as metaGeneratorPrompt } from "./prompts/meta-generator"
@@ -19,37 +20,79 @@ import { prompt as outlineBuilderPrompt } from "./prompts/outline-builder"
 
 dotenv.config()
 
-const backgroundColors = [
-  "3498db", // 밝은 파랑
-  "2ecc71", // 에메랄드 녹색
-  "e74c3c", // 밝은 빨강
-  "f39c12", // 주황
-  "9b59b6", // 보라
-  "1abc9c", // 청록색
-  "d35400", // 진한 주황
-  "c0392b", // 어두운 빨강
-  "16a085", // 진한 청록색
-  "2980b9", // 진한 파랑
-  "8e44ad", // 진한 보라
-  "2c3e50", // 짙은 남색
+const argv = yargs(process.argv.slice(2))
+  .option("n-content", {
+    alias: "n",
+    describe: "Number of content pieces to generate",
+    type: "number",
+    default: 1,
+  })
+  .option("topic", {
+    alias: "t",
+    describe: "Topic for content generation",
+    type: "string",
+    default: "stock-trading", // TODO: Change the default topic
+  })
+  .parseSync()
+
+const BACKGROUND_COLORS = [
+  "3498db",
+  "2ecc71",
+  "e74c3c",
+  "f39c12",
+  "9b59b6",
+  "1abc9c",
+  "d35400",
+  "c0392b",
+  "16a085",
+  "2980b9",
+  "8e44ad",
+  "2c3e50",
 ]
 
+const THUMBNAIL_WIDTH = 1200
+const THUMBNAIL_HEIGHT = 630
+const TEXT_COLOR = "ffffff"
+
+type Meta = {
+  meta: {
+    title: string
+    description: string
+  }
+}
+
 async function main() {
-  const topic = "stock trading"
+  const count = argv["n-content"]
+  const topic = argv["topic"]
 
   const model = new ChatMistralAI({
     model: "open-mixtral-8x7b",
-    temperature: 0.8,
+    temperature: 0.7,
   })
 
-  const outline = await generateOutline(model, topic)
-  const content = await generateContent(model, outline)
-  const meta = await generateMeta(model, outline)
+  for (let i = 0; i < count; i++) {
+    try {
+      console.log(`Generating content ${i + 1} of ${count}...`)
 
-  await createMarkdownFile(content, meta)
+      const outline = await generateOutline(model, topic)
+      const content = await generateContent(model, outline)
+      const meta = await generateMeta(model, outline)
+
+      await createMarkdownFile(content, meta)
+    } catch (error) {
+      console.error("An error occurred:", error)
+      console.error("Skipping to the next content generation...")
+    }
+
+    console.log("Content generation complete. Moving to the next content...")
+  }
 }
 
-async function generateOutline(model: BaseChatModel, topic: string) {
+// Helper functions with improved error handling and typing
+async function generateOutline(
+  model: BaseChatModel,
+  topic: string,
+): Promise<string> {
   console.log("Generating outline...")
   const outlineBuildChain = RunnableSequence.from([
     PromptTemplate.fromTemplate(outlineBuilderPrompt),
@@ -61,7 +104,10 @@ async function generateOutline(model: BaseChatModel, topic: string) {
   return outline
 }
 
-async function generateContent(model: BaseChatModel, outline: string) {
+async function generateContent(
+  model: BaseChatModel,
+  outline: string,
+): Promise<string> {
   console.log("Generating content based on the outline...")
   const contentCreateChain = RunnableSequence.from([
     PromptTemplate.fromTemplate(contentCreatorPrompt),
@@ -73,7 +119,10 @@ async function generateContent(model: BaseChatModel, outline: string) {
   return content
 }
 
-async function generateMeta(model: BaseChatModel, outline: string) {
+async function generateMeta(
+  model: BaseChatModel,
+  outline: string,
+): Promise<Meta> {
   console.log("Generating meta data based on the outline...")
   const metaGenerateChain = RunnableSequence.from([
     PromptTemplate.fromTemplate(metaGeneratorPrompt),
@@ -83,18 +132,15 @@ async function generateMeta(model: BaseChatModel, outline: string) {
 
   const meta = await metaGenerateChain.invoke({ Outline: outline })
   console.log("Meta data generated.")
-  return meta as { meta: { title: string; description: string } }
+  return meta as Meta
 }
 
 async function generatePlaceholderThumbnail(fileName: string): Promise<string> {
-  const width = 1200
-  const height = 630
   const text = fileName.replaceAll("-", " ")
   const backgroundColor =
-    backgroundColors[Math.floor(Math.random() * backgroundColors.length)]
-  const textColor = "ffffff"
+    BACKGROUND_COLORS[Math.floor(Math.random() * BACKGROUND_COLORS.length)]
 
-  const url = `https://dummyimage.com/${width}x${height}/${backgroundColor}/${textColor}.png&text=${encodeURIComponent(text)}`
+  const url = `https://dummyimage.com/${THUMBNAIL_WIDTH}x${THUMBNAIL_HEIGHT}/${backgroundColor}/${TEXT_COLOR}.png&text=${encodeURIComponent(text)}`
 
   const response = await axios({
     url,
@@ -119,10 +165,7 @@ async function generatePlaceholderThumbnail(fileName: string): Promise<string> {
   })
 }
 
-async function createMarkdownFile(
-  content: string,
-  meta: { meta: { title: string; description: string } },
-) {
+async function createMarkdownFile(content: string, meta: Meta): Promise<void> {
   const currentDate = new Date()
     .toLocaleString("en-US", {
       timeZone: "Asia/Seoul",
@@ -164,4 +207,4 @@ ${content}`
   console.log(`Markdown file created: ${filePath}`)
 }
 
-main()
+main().catch(error => console.error("An error occurred:", error))

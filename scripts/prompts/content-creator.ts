@@ -14,9 +14,9 @@ export const prompt = `### Instruction ###
    - Use SEO best practices, such as incorporating keywords naturally and using internal and external links.
    - Keep the content within the 1000 to 1800-word range.
    - Construct the content in markdown format with the following header structure:
-     - MUST Use a single # for the main title (H1)
-     - MUST Use ## for main section headers (H2)
-     - MUST Use ### for subsection headers (H3)
+     - MUST Use a single # sign for the main title
+     - MUST Use ## sign for main section headers
+     - MUST Use ### sign for subsection headers
    - Do not use more than three # symbols for any header.
 
 ### Input ###
@@ -25,9 +25,9 @@ export const prompt = `### Instruction ###
 ### Output Instruction ###
 Provide the full blog post content based on the given outline. The content should be in markdown format with appropriate headers and subheaders as specified in the instructions. Ensure that the final post is comprehensive, engaging, and aligns closely with the provided outline.
 you MUST use the following header structure:
-- Use a single # for the main title (H1)
-- Use ## for main section headers (H2)
-- Use ### for subsection headers (H3)
+- Use a single # for the main title
+- Use ## for main section headers
+- Use ### for subsection headers
 - Do not use more than three # symbols for any header.
 
 ### Reward ###

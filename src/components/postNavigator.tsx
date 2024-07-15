@@ -20,7 +20,7 @@ const PostNavigator: React.FC<PostNavigatorProps> = ({
         {nextPost && (
           <Link key={nextPost.id} to={nextPost.slug as string}>
             <Card>
-              <Direction>이전 글</Direction>
+              <Direction>Prev</Direction>
               <Title>{nextPost.title}</Title>
             </Card>
           </Link>
@@ -30,7 +30,7 @@ const PostNavigator: React.FC<PostNavigatorProps> = ({
         {prevPost && (
           <Link key={prevPost.id} to={prevPost.slug as string}>
             <Card>
-              <Direction>다음 글</Direction>
+              <Direction>Next</Direction>
               <Title>{prevPost.title}</Title>
             </Card>
           </Link>

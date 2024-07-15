@@ -4578,6 +4578,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/yargs-parser@npm:*":
+  version: 21.0.3
+  resolution: "@types/yargs-parser@npm:21.0.3"
+  checksum: a794eb750e8ebc6273a51b12a0002de41343ffe46befef460bdbb57262d187fdf608bc6615b7b11c462c63c3ceb70abe2564c8dd8ee0f7628f38a314f74a9b9b
+  languageName: node
+  linkType: hard
+
+"@types/yargs@npm:^17.0.32":
+  version: 17.0.32
+  resolution: "@types/yargs@npm:17.0.32"
+  dependencies:
+    "@types/yargs-parser": "npm:*"
+  checksum: 1e2b2673847011ce43607df690d392f137d95a2d6ea85aa319403eadda2ef4277365efd4982354d8843f2611ef3846c88599660aaeb537fa9ccddae83c2a89de
+  languageName: node
+  linkType: hard
+
 "@types/yoga-layout@npm:1.9.2":
   version: 1.9.2
   resolution: "@types/yoga-layout@npm:1.9.2"
@@ -10406,6 +10422,7 @@ __metadata:
     "@types/react-helmet": "npm:^6.1.11"
     "@types/styled-components": "npm:^5.1.34"
     "@types/typography": "npm:^0.16.7"
+    "@types/yargs": "npm:^17.0.32"
     "@typescript-eslint/eslint-plugin": "npm:^6.13.2"
     "@typescript-eslint/parser": "npm:^6.13.2"
     babel-plugin-styled-components: "npm:^2.1.4"
@@ -10461,6 +10478,7 @@ __metadata:
     typescript: "npm:^5.3.3"
     typography: "npm:^0.16.24"
     vscode-theme-github-light: "https://github.com/yunlingz/vscode-theme-github-light.git#commit=38174065a9e6c8d93a20fab5fe7c7641c07aeca7"
+    yargs: "npm:^17.7.2"
   languageName: unknown
   linkType: soft
 
@@ -21191,7 +21209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.0.0, yargs@npm:^17.5.1":
+"yargs@npm:^17.0.0, yargs@npm:^17.5.1, yargs@npm:^17.7.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:
