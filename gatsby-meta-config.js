@@ -1,6 +1,7 @@
 /**
  * @typedef {Object} Links
  * @prop {string} github Your github repository
+ * @prop {string} juiceTarget Your target URL
  */
 
 /**
@@ -24,7 +25,10 @@ const metaConfig = {
   siteUrl: "https://blog-stream.netlify.app",
   lang: "en-US",
   utterances: "mingi3314/blog-stream",
-  links: { github: "https://github.com/mingi3314/blog-stream" },
+  links: {
+    github: "https://github.com/mingi3314/blog-stream",
+    juiceTarget: "https://alphasquare.co.kr/",
+  },
   favicon: "src/images/icon.png",
 }
 
