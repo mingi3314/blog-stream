@@ -221,6 +221,7 @@ module.exports = {
   graphqlTypegen: true,
   siteMetadata,
   plugins: [
+    `gatsby-plugin-sitemap`,
     ...corePlugins,
     ...devPlugins,
     ...imagePlugins,
