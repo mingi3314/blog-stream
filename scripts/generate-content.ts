@@ -67,7 +67,7 @@ async function main() {
 
   const model = new ChatMistralAI({
     model: "open-mixtral-8x7b",
-    temperature: 0.7,
+    temperature: 0.8,
   })
 
   for (let i = 0; i < count; i++) {

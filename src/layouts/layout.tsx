@@ -2,6 +2,7 @@ import React from "react"
 
 import styled, { ThemeProvider } from "styled-components"
 
+import FamilyDropdown from "~/src/components/familyDropdown"
 import NavBar from "~/src/components/navBar/navBar"
 import useSiteMetadata from "~/src/hooks/useSiteMetadata"
 import useTheme from "~/src/hooks/useTheme"
@@ -24,6 +25,7 @@ const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
         </Container>
         <Footer role="contentinfo">
           <Copyright aria-label="Copyright">{copyrightString}</Copyright>
+          <FamilyDropdown />
         </Footer>
       </ThemeContext.Provider>
     </ThemeProvider>
@@ -44,6 +46,7 @@ const Footer = styled.footer`
   align-items: center;
   height: var(--footer-height);
   background-color: var(--color-gray-1);
+  gap: 1rem; /* 항목들 간의 간격을 1rem로 설정 */
 `
 
 const Copyright = styled.span`
@@ -51,12 +54,5 @@ const Copyright = styled.span`
   font-weight: var(--font-weight-regular);
   color: var(--color-gray-6);
 `
-
-// const RepoLink = styled.a`
-//   color: var(--color-blue);
-//   &:hover {
-//     text-decoration: underline;
-//   }
-// `
 
 export default Layout

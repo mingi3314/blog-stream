@@ -19,14 +19,10 @@ const siteMetadata = {
     //   link: "/about/",
     //   name: "About",
     // },
-    {
-      link: meta.links.github,
-      name: "Github",
-    },
-    {
-      link: meta.links.juiceTarget,
-      name: "See Also",
-    },
+    // {
+    //   link: meta.links.github,
+    //   name: "Github",
+    // },
   ],
 }
 
