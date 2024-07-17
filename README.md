@@ -2,6 +2,19 @@
 
 Welcome to the **Blog-Factory** repository, a powerful and automated AI-driven platform designed to streamline the process of creating, optimizing, and deploying high-quality blog content. This repository leverages cutting-edge AI technologies to generate thematic content, perform on-page SEO optimization, and deploy blogs with high Domain Rank seamlessly using Netlify.
 
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [1. Create a New Repository](#1-create-a-new-repository)
+  - [2. Deploy with Netlify](#2-deploy-with-netlify)
+  - [3. Modify Configuration](#3-modify-configuration)
+  - [4. Update GitHub Repository Settings](#4-update-github-repository-settings)
+  - [5. Generate Content](#5-generate-content)
+  - [6. Register with Google Search Console](#6-register-with-google-search-console)
+- [Usage](#usage)
+- [Contribution](#contribution)
+
 ## Features
 
 **Blog-Factory** offers a comprehensive suite of features to enhance your blogging experience:
