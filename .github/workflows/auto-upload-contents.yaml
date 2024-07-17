@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       n_content:
-        description: "Number of content pieces to generate"
+        description: "Number of posts to generate and upload"
         required: true
         default: "1"
       topic:
