@@ -2,6 +2,16 @@ import React, { useEffect, useRef, useState } from "react"
 
 import styled from "styled-components"
 
+interface FamilySite {
+  name: string
+  url: string
+}
+
+const familySites: FamilySite[] = [
+  { name: "AlphaSquare", url: "https://alphasquare.co.kr/home" },
+  // Add more family sites here
+]
+
 const FamilyDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -28,14 +38,16 @@ const FamilyDropdown: React.FC = () => {
 
   return (
     <DropdownContainer ref={dropdownRef}>
-      <DropdownButton onClick={toggleDropdown}>Family Sites</DropdownButton>
-      {isOpen && (
-        <DropdownMenu>
-          <DropdownItem href="https://alphasquare.co.kr/home">
-            AlphaSquare
+      <DropdownButton onClick={toggleDropdown} aria-expanded={isOpen}>
+        Family Sites
+      </DropdownButton>
+      <DropdownMenu aria-hidden={!isOpen} $isOpen={isOpen}>
+        {familySites.map(site => (
+          <DropdownItem key={site.url} href={site.url}>
+            {site.name}
           </DropdownItem>
-        </DropdownMenu>
-      )}
+        ))}
+      </DropdownMenu>
     </DropdownContainer>
   )
 }
@@ -56,15 +68,20 @@ const DropdownButton = styled.button`
   }
 `
 
-const DropdownMenu = styled.div`
+const DropdownMenu = styled.div<{ $isOpen: boolean }>`
   display: flex;
   flex-direction: column;
   position: absolute;
-  bottom: 100%; /* 부모 요소의 아래에서 100% 위로 위치 */
+  bottom: 100%;
   background-color: var(--color-post-background);
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   min-width: 160px;
+  visibility: ${props => (props.$isOpen ? "visible" : "hidden")};
+  opacity: ${props => (props.$isOpen ? 1 : 0)};
+  transition:
+    visibility 0s,
+    opacity 0.2s linear;
 `
 
 const DropdownItem = styled.a`
