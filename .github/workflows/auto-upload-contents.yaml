@@ -49,6 +49,7 @@ jobs:
       - name: Generate content
         run: |
           source $VENV
+          export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}
           python scripts/generate_content.py --n-content ${{ github.event.inputs.n_content }} --topic "${{ github.event.inputs.topic }}"
         env:
           VENV: ${{ github.workspace }}/.venv/bin/activate
