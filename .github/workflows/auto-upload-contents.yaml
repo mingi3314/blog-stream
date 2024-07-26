@@ -16,12 +16,12 @@ on:
         required: false
         default: "false"
   schedule:
-    - cron: ${{ vars.SCHEDULED_POSTING_CRON || '0 0 * * 1' }} # Default: Run every Monday at 00:00 UTC
+    - cron: "0 0 * * 1" # Run every Monday at 00:00 UTC
 
 jobs:
   generate-content:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' && vars.ENABLE_SCHEDULED_POSTING == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && vars.ENABLE_SCHEDULED_POSTING == 'true') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -54,9 +54,13 @@ jobs:
           source $VENV
           export PYTHONPATH=$PYTHONPATH:${{ github.workspace }}
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            python scripts/generate_content.py --n-content ${{ vars.SCHEDULED_POST_COUNT || 5 }} --topic "${{ vars.SCHEDULED_POST_TOPIC || 'Free Topic' }}"
+            python scripts/generate_content.py \
+              --n-content ${{ vars.SCHEDULED_POST_COUNT || 5 }} \
+              --topic "${{ vars.SCHEDULED_POST_TOPIC || 'Free Topic' }}"
           else
-            python scripts/generate_content.py --n-content ${{ github.event.inputs.n_content }} --topic "${{ github.event.inputs.topic }}"
+            python scripts/generate_content.py \
+              --n-content ${{ github.event.inputs.n_content }} \
+              --topic "${{ github.event.inputs.topic }}"
           fi
         env:
           VENV: ${{ github.workspace }}/.venv/bin/activate
