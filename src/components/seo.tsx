@@ -118,6 +118,10 @@ const SEO: React.FC<SEOProperties> = ({
             content: description,
           },
           {
+            name: "og:url",
+            content: `${site.siteUrl}${slug}`,
+          },
+          {
             property: "og:type",
             content: "website",
           },
